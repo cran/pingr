@@ -1,0 +1,14 @@
+a7bec49a9eeb0c64f512251b218dd299 *DESCRIPTION
+3d55ef9a10c04c95a867277c02d32bca *LICENSE
+55736b59b631f8a26235234d3f0980b8 *NAMESPACE
+51b7705ba0e5626956258519f30a22ec *R/ping-package.r
+67a2cd20d8d974c3bee598c2a33c6e6e *R/utils.r
+e65290a168dae3cc13f0167b8367aa39 *README.md
+b21d44bafdc468fc65138f75d5769321 *man/ping.Rd
+0077f3cf6308cbea5e96caab26b09c51 *man/ping_port.Rd
+4c99cabe9adfd22094fe065416e94504 *man/pingr-package.Rd
+8d4158b8eb92153e2d3f581682b2a3c1 *src/Makevars.win
+3c21366e2be7ef3f70338f7fd4f0b622 *src/rping.c
+7fcb6d8cc9bd74131ed6bfd281a93c9a *tests/testthat.R
+46db3a374b06c36e00cee5eb19627a28 *tests/testthat/test-icmp.r
+d7a58aeafeb316589a0e8d2128b5fe04 *tests/testthat/test-tcp.r
