@@ -32,12 +32,14 @@ void usleep(__int64 usec) {
 #  include <unistd.h>
 #  include <netdb.h>
 #  include <arpa/inet.h>
+#  include <fcntl.h>
 #  define WINSTARTUP()
 #  define WINCLEANUP()
 #endif
 
 #include <sys/types.h>
 #include <sys/time.h>
+#include <errno.h>
 
 SEXP r_ping(SEXP p_destination, SEXP p_port, SEXP p_type, SEXP p_continuous,
 	    SEXP p_verbose, SEXP p_count, SEXP p_timeout) {
@@ -49,8 +51,6 @@ SEXP r_ping(SEXP p_destination, SEXP p_port, SEXP p_type, SEXP p_continuous,
 
   struct in_addr ip_address;
   struct hostent *remote_host = NULL;
-  const char *host_name;
-  int is_ip;
   int i = 0;
 
 #ifdef WIN32
@@ -90,8 +90,6 @@ SEXP r_ping(SEXP p_destination, SEXP p_port, SEXP p_type, SEXP p_continuous,
 
   remote_host = gethostbyname(destination);
   if (!remote_host) { error("Cannot resolve host name"); }
-  host_name = remote_host->h_name;
-  is_ip = !strcmp(host_name, destination);
   ip_address = *(struct in_addr*) remote_host->h_addr_list[0];
 
   WINCLEANUP();
@@ -117,6 +115,9 @@ SEXP r_ping(SEXP p_destination, SEXP p_port, SEXP p_type, SEXP p_continuous,
     fd_set read, write;
     int c_socket, ret;
     double time;
+#ifdef WIN32
+    u_long imode = 1;
+#endif
 
     WINSTARTUP();
 
@@ -138,8 +139,25 @@ SEXP r_ping(SEXP p_destination, SEXP p_port, SEXP p_type, SEXP p_continuous,
 
     gettimeofday(&start, NULL);
 
-    connect(c_socket, (const struct sockaddr*) &c_address,
-	    sizeof(c_address));
+    /* Set non-blocking */
+#ifdef WIN32
+    ioctlsocket(c_socket, FIONBIO, &imode);
+#else
+    if (fcntl(c_socket, F_SETFL, O_NONBLOCK) < 0) {
+      error("Cannot set socket to non-blocking");
+    }
+#endif
+
+    ret = connect(c_socket, (const struct sockaddr*) &c_address,
+		  sizeof(c_address));
+
+#ifdef WIN32
+    ret = WSAGetLastError();
+    if (ret != WSAEWOULDBLOCK && ret != 0) { error("Cannot connect"); }
+
+#else
+    if (ret < 0 && errno != EINPROGRESS) { error("Cannot connect"); }
+#endif
 
     FD_ZERO(&read);
     FD_ZERO(&write);
