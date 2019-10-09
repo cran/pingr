@@ -11,12 +11,16 @@ is_online(timeout = 0.2)
 }
 \value{
 Possible values: \itemize{
-  \item \code{TRUE} Yes, online.
-  \item \code{FALSE} No, not online.
-  \item \code{"nodns"} We re online, but without a DNS service.
+\item \code{TRUE} Yes, online.
+\item \code{FALSE} No, not online.
+\item \code{"nodns"} We re online, but without a DNS service.
 }
 }
 \description{
 Ping some name servers that are always (well, almost) up.
 If these are unreachable, then you are most probably not online.
+}
+\examples{
+is_online()
+is_online(timeout = 0.01)
 }

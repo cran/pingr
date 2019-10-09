@@ -2,10 +2,19 @@
 % Please edit documentation in R/ping-package.r
 \name{ping_port}
 \alias{ping_port}
+\alias{is_up}
 \title{Check if a port of a server is active, measure response time}
 \usage{
-ping_port(destination, port = 80L, continuous = FALSE,
-  verbose = continuous, count = 3L, timeout = 1)
+ping_port(
+  destination,
+  port = 80L,
+  continuous = FALSE,
+  verbose = continuous,
+  count = 3L,
+  timeout = 1
+)
+
+is_up(destination, port = 80, timeout = 0.5, fail_on_dns_error = FALSE)
 }
 \arguments{
 \item{destination}{Host name or IP address.}
@@ -22,10 +31,22 @@ pinging.}
 
 \item{timeout}{Timeout, in seconds. How long to wait for a
 ping to succeed.}
+
+\item{fail_on_dns_error}{If \code{TRUE} then \code{is_up()} fails if the DNS
+resolution fails. Otherwise it will return \code{FALSE}.}
 }
 \value{
-Vector of response times. \code{NA} means no response
+Vector of response times, in milliseconds.
+\code{NA} means no response within the timeout.
 }
 \description{
 Check if a port of a server is active, measure response time
+
+\code{is_up()} checks if a web server is up.
+}
+\examples{
+ping_port("127.0.0.1")
+ping_port("r-project.org")
+is_up("google.com")
+is_up("google.com", timeout = 0.01)
 }

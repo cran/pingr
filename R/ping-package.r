@@ -17,9 +17,13 @@ NULL
 #' @param count Number of pings to perform.
 #' @param timeout Timeout, in seconds. How long to wait for a
 #'   ping to succeed.
-#' @return Vector of response times. \code{NA} means no response
+#' @return Vector of response times, in milliseconds.
+#'   \code{NA} means no response within the timeout.
 #'
 #' @export
+#' @examples
+#' ping_port("127.0.0.1")
+#' ping_port("r-project.org")
 
 ping_port <- function(destination, port = 80L,
                       continuous = FALSE, verbose = continuous,
@@ -48,10 +52,14 @@ ping_port <- function(destination, port = 80L,
 #' @param count Number of pings to perform.
 #' @param timeout Timeout for a ping response.
 #' @return Vector of response times. \code{NA} means no response, in
-#'   seconds. Currently \code{NA}s are always at the end of the vector,
+#'   milliseconds. Currently \code{NA}s are always at the end of the vector,
 #'   and not in their correct position.
 #'
 #' @export
+#' @importFrom processx run
+#' @examples
+#' ping("8.8.8.8")
+#' ping("r-project.org")
 
 ping <- function(destination, continuous = FALSE, verbose = continuous,
                  count = 3L, timeout = 1.0) {
@@ -62,7 +70,8 @@ ping <- function(destination, continuous = FALSE, verbose = continuous,
 
   os <- ping_os(destination, continuous, count, timeout)
 
-  output <- suppressWarnings(system(os$cmd, intern = ! verbose))
+  status <- run(os$cmd[1], os$cmd[-1], error_on_status = FALSE)
+  output <- strsplit(status$stdout, "\r?\n")[[1]]
 
   if (!continuous) {
     timings <- grep(os$regex, output, value = TRUE, perl = TRUE)
@@ -80,41 +89,36 @@ ping_os <- function(destination, continuous, count, timeout) {
   if (.Platform$OS.type == "windows") {
     ping_file <- file.path("C:", "windows", "system32", "ping.exe")
     if (!file.exists(ping_file)) { ping_file <- "ping" }
-    cmd <- ping_file %+% " -w " %+% chr(int(timeout * 1000))
-    if (continuous) {
-      cmd <- cmd %+% " -t"
-    } else {
-      cmd <- cmd %+% " -n " %+% chr(count)
-    }
-    cmd <- cmd %+% " " %+% destination
+    cmd <- c(
+      ping_file,
+      "-w", int(timeout * 1000),
+      if (continuous) "-t" else c("-n", count),
+      destination
+    )
 
   } else if (Sys.info()["sysname"] == "Darwin") {
-    cmd <- "/sbin/ping " %+% "-W " %+% chr(int(timeout * 1000))
-    if (!continuous) cmd <- cmd %+% " -c " %+% chr(count)
-    cmd <- cmd %+% " " %+% destination
+    cmd <- c(
+      "/sbin/ping",
+      "-W", int(timeout * 1000),
+      if (!continuous) c("-c", count),
+      destination
+    )
+
+  } else if (Sys.info()[["sysname"]] == "Linux") {
+    cmd <- c(
+      "ping",
+      "-W", int(timeout),
+      if (!continuous) c("-c", count),
+      destination
+    )
 
   } else if (.Platform$OS.type == "unix") {
-    cmd <- "ping " %+% "-W " %+% chr(int(timeout * 1000))
-    if (!continuous) cmd <- cmd %+% " -c " %+% chr(count)
-    cmd <- cmd %+% " " %+% destination
-
-  } else {
-    ## We are probably on some Unix, so search for ping
-    if (file.exists("/sbin/ping")) {
-      ping_file <- "/sbin/ping"
-    } else if (file.exists("/usr/sbin/ping")) {
-      ping_file <- "/usr/sbin/ping"
-    } else if (file.exists("/bin/ping")) {
-      ping_file <- "/bin/ping"
-    } else if (file.exists("/usr/bin/ping")) {
-      ping_file <- "/usr/bin/ping"
-    } else {
-      ping_file <- "ping"
-    }
-    cmd <- ping_file %+% " -W " %+% chr(int(timeout * 1000))
-    if (!continuous) cmd <- cmd %+% " -c " %+% chr(count)
-    cmd <- cmd %+% " " %+% destination
-
+    cmd <- c(
+      "ping",
+      "-W", int(timeout * 1000),
+      if (!continuous) c("-c", count),
+      destination
+    )
   }
 
   list(cmd = cmd, regex = "^.*time=(.+)[ ]?ms.*$")
@@ -141,6 +145,9 @@ internet_ips <- c("8.8.8.8",
 #' }
 #'
 #' @export
+#' @examples
+#' is_online()
+#' is_online(timeout = 0.01)
 
 is_online <- function(timeout = 0.2) {
   for (domain in internet_domains) {
@@ -150,4 +157,24 @@ is_online <- function(timeout = 0.2) {
     if (!is.na(ping(ip, count = 1, timeout = timeout))) { return("nodns") }
   }
   return(FALSE)
+}
+
+#' `is_up()` checks if a web server is up.
+#'
+#' @rdname ping_port
+#' @param fail_on_dns_error If `TRUE` then `is_up()` fails if the DNS
+#'   resolution fails. Otherwise it will return `FALSE`.
+#' @export
+#' @examples
+#' is_up("google.com")
+#' is_up("google.com", timeout = 0.01)
+
+is_up <- function(destination, port = 80, timeout = 0.5,
+                  fail_on_dns_error = FALSE) {
+  tryCatch(
+    !is.na(ping_port(destination, port = port, timeout = timeout, count = 1)),
+    error = function(e) {
+      if (fail_on_dns_error) stop(e)
+      FALSE
+    })
 }
