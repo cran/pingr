@@ -19,12 +19,14 @@ Possible values: \itemize{
 \description{
 Check if the computer is online. It does three tries:
 \itemize{
+\item Retrieve Apple's Captive Portal test page, see \code{\link[=apple_captive_test]{apple_captive_test()}}.
 \item Queries myip.opendns.com on OpenDNS, see \code{\link[=my_ip]{my_ip()}}.
 \item Retrieves icanhazip.com via HTTPS, see \code{\link[=my_ip]{my_ip()}}.
-\item Retrieve Apple's Captive Portal test page, see \code{\link[=apple_captive_test]{apple_captive_test()}}.
 If any of these are successful, it returns \code{TRUE}.
 }
 }
 \examples{
+\dontshow{if (pingr:::safe_examples()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
 is_online()
+\dontshow{\}) # examplesIf}
 }

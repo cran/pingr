@@ -4,8 +4,13 @@
 \alias{ping}
 \title{Ping a remote server, to see if it is alive}
 \usage{
-ping(destination, continuous = FALSE, verbose = continuous,
-  count = 3L, timeout = 1)
+ping(
+  destination,
+  continuous = FALSE,
+  verbose = continuous,
+  count = 3L,
+  timeout = 1
+)
 }
 \arguments{
 \item{destination}{Host name or IP address.}
@@ -31,6 +36,8 @@ system administrator can send ICMP packages, so we call out
 to the system's ping utility.
 }
 \examples{
+\dontshow{if (pingr:::safe_examples()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
 ping("8.8.8.8")
 ping("r-project.org")
+\dontshow{\}) # examplesIf}
 }

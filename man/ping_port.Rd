@@ -5,11 +5,22 @@
 \alias{is_up}
 \title{Check if a port of a server is active, measure response time}
 \usage{
-ping_port(destination, port = 80L, continuous = FALSE,
-  verbose = continuous, count = 3L, timeout = 1)
+ping_port(
+  destination,
+  port = 80L,
+  continuous = FALSE,
+  verbose = continuous,
+  count = 3L,
+  timeout = 1
+)
 
-is_up(destination, port = 80, timeout = 0.5,
-  fail_on_dns_error = FALSE, check_online = TRUE)
+is_up(
+  destination,
+  port = 80,
+  timeout = 0.5,
+  fail_on_dns_error = FALSE,
+  check_online = TRUE
+)
 }
 \arguments{
 \item{destination}{Host name or IP address.}
@@ -44,7 +55,11 @@ Check if a port of a server is active, measure response time
 \code{is_up()} checks if a web server is up.
 }
 \examples{
+\dontshow{if (pingr:::safe_examples()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
 ping_port("r-project.org")
+\dontshow{\}) # examplesIf}
+\dontshow{if (pingr:::safe_examples()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
 is_up("google.com")
 is_up("google.com", timeout = 0.01)
+\dontshow{\}) # examplesIf}
 }

@@ -19,7 +19,7 @@
 #'   \code{NA} means no response within the timeout.
 #'
 #' @export
-#' @examples
+#' @examplesIf pingr:::safe_examples()
 #' ping_port("r-project.org")
 
 ping_port <- function(destination, port = 80L,
@@ -54,7 +54,7 @@ ping_port <- function(destination, port = 80L,
 #'
 #' @export
 #' @importFrom processx run
-#' @examples
+#' @examplesIf pingr:::safe_examples()
 #' ping("8.8.8.8")
 #' ping("r-project.org")
 
@@ -135,9 +135,9 @@ ping_os <- function(destination, continuous, count, timeout) {
 #' Is the computer online?
 #'
 #' Check if the computer is online. It does three tries:
+#' * Retrieve Apple's Captive Portal test page, see [apple_captive_test()].
 #' * Queries myip.opendns.com on OpenDNS, see [my_ip()].
 #' * Retrieves icanhazip.com via HTTPS, see [my_ip()].
-#' * Retrieve Apple's Captive Portal test page, see [apple_captive_test()].
 #' If any of these are successful, it returns `TRUE`.
 #'
 #' @param timeout Timeout for the queries. (Note: it is currently not
@@ -148,12 +148,16 @@ ping_os <- function(destination, continuous, count, timeout) {
 #' }
 #'
 #' @export
-#' @examples
+#' @examplesIf pingr:::safe_examples()
 #' is_online()
 
 is_online <- function(timeout = 1) {
   opts <- options(timeout = timeout)
   on.exit(options(opts), add = TRUE)
+
+  tryCatch({
+    if (apple_captive_test()) return(TRUE)
+  }, error = function(e) NULL)
 
   tryCatch({
     my_ip(method = "dns")
@@ -163,10 +167,6 @@ is_online <- function(timeout = 1) {
   tryCatch({
     my_ip(method = "https")
     return(TRUE)
-  }, error = function(e) NULL)
-
-  tryCatch({
-    if (apple_captive_test()) return(TRUE)
   }, error = function(e) NULL)
 
   FALSE
@@ -181,7 +181,7 @@ is_online <- function(timeout = 1) {
 #'   Otherwise it is possible that the computer is behind a proxy, that
 #'   hijacks the HTTP connection to `destination`.
 #' @export
-#' @examples
+#' @examplesIf pingr:::safe_examples()
 #' is_up("google.com")
 #' is_up("google.com", timeout = 0.01)
 
