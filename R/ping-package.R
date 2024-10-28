@@ -72,7 +72,7 @@ ping <- function(destination, continuous = FALSE, verbose = continuous,
 
   if (!continuous) {
     timings <- grep(os$regex, output, value = TRUE, perl = TRUE)
-    times <- sub(os$regex, "\\1", timings, perl = TRUE)
+    times <- sub(os$regex, "\\2", timings, perl = TRUE)
     res <- as.numeric(times)
     length(res) <- count
     res
@@ -123,6 +123,23 @@ ping_os <- function(destination, continuous, count, timeout) {
       if (!continuous) c("56", count)
     )
 
+  } else if (Sys.info()[["sysname"]] == "OpenBSD") {
+    cmd <- c(
+      "ping",
+      "-w", int(timeout),
+      if (!continuous) c("-c", count),
+      destination
+    )
+
+  } else if (Sys.info()[["sysname"]] == "NetBSD") {
+    cmd <- c(
+      "ping",
+      # on NetBSD -w is a total timeout, so adjust it
+      "-w", if (continuous) int(timeout) else count * int(timeout),
+      if (!continuous) c("-c", count),
+      destination
+    )
+
   } else if (.Platform$OS.type == "unix") {
     cmd <- c(
       "ping",
@@ -132,7 +149,7 @@ ping_os <- function(destination, continuous, count, timeout) {
     )
   }
 
-  list(cmd = cmd, env = env, regex = "^.*time=(.+)[ ]?ms.*$")
+  list(cmd = cmd, env = env, regex = "^.*time(=|<)(.+)[ ]?ms.*$")
 }
 
 #' Is the computer online?

@@ -1,6 +1,6 @@
 Package: pingr
 Title: Check if a Remote Computer is Up
-Version: 2.0.3
+Version: 2.0.4
 Authors@R: c(
     person("Gábor", "Csárdi", , "csardi.gabor@gmail.com", role = c("aut", "cre")),
     person("Posit Software, PBC", role = c("cph", "fnd"))
@@ -12,15 +12,16 @@ URL: https://r-lib.github.io/pingr/, https://github.com/r-lib/pingr
 BugReports: https://github.com/r-lib/pingr/issues
 Depends: R (>= 3.6)
 Imports: processx, utils
-Suggests: covr, testthat (>= 3.0.0)
+Suggests: covr, ps, testthat (>= 3.0.0)
 Config/Needs/website: tidyverse/tidytemplate
 Config/testthat/edition: 3
 Encoding: UTF-8
 RoxygenNote: 7.2.3
+Biarch: true
 NeedsCompilation: yes
-Packaged: 2023-12-10 13:42:05 UTC; gaborcsardi
+Packaged: 2024-10-28 19:59:14 UTC; gaborcsardi
 Author: Gábor Csárdi [aut, cre],
   Posit Software, PBC [cph, fnd]
 Maintainer: Gábor Csárdi <csardi.gabor@gmail.com>
 Repository: CRAN
-Date/Publication: 2023-12-10 14:10:02 UTC
+Date/Publication: 2024-10-28 20:20:02 UTC
