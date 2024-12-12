@@ -1,7 +1,7 @@
-ceffd90f79b88522d91a2632b679844a *DESCRIPTION
+cf5e0c40798a12d01196fd5d79184bdd *DESCRIPTION
 17166b9886421dd0723f7999d3cfdfac *LICENSE
 2c5165bea5eb755fe602f6f04c1c22c7 *NAMESPACE
-f31063e11254a4895359d2026f5a0564 *NEWS.md
+61b39da5e2389ac17a06d36ac70866ad *NEWS.md
 517cdbbe109d81c0ff18d36103e2d963 *R/dns.R
 0e684fb0d0770c28ca155f217cecb1c3 *R/http.R
 0f5553ed0edf5063ff9d9617aff79a9b *R/my-ip.R
@@ -21,7 +21,7 @@ a60781ad7ee2f4a0d315950e216fad5d *R/utils.R
 f344d3369987cac9354168875ac14e33 *man/pingr-package.Rd
 60b61ab28ace9f59732aa9f228c747c8 *src/Makevars.in
 86529b4f6073e314e08a877b2dc33924 *src/Makevars.win
-37d8e1efdcec2036f08232144dc6bbb7 *src/dns.c
+6707ca725fabbf855fb0778f5c7131e3 *src/dns.c
 cabf8d2b7e855790412f6d1841139e98 *src/errors.c
 d96005dff3d1900216099ce2a94eda19 *src/errors.h
 7946d96fd1589d42944976739c2335bf *src/init.c
@@ -29,4 +29,4 @@ cbb7e0e14198be4765ce6935a403aabc *src/pingr.h
 24b531d4aa0240b2866eea93529dc0d4 *src/rping.c
 846ebe50a5a473d9809938988db23057 *tests/testthat.R
 3639b647e6bc419e555a3ef82bac77a7 *tests/testthat/test-icmp.R
-eb1b02efae6fb651b317bf47762b03d2 *tests/testthat/test-tcp.R
+7dd5b2e6e26cac7498581d7fd5bb6b1e *tests/testthat/test-tcp.R

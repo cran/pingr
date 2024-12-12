@@ -1,3 +1,7 @@
+# pingr 2.0.5
+
+* pingr now compiles with musl, e.g. on Alpine Linux, again.
+
 # pingr 2.0.4
 
 * `ping()` now handles sub-millisecond response times (#24).
